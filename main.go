@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/Remydeme/iurgence/api"
-	"github.com/Remydeme/iurgence/api/middleware"
-	"github.com/Remydeme/iurgence/api/middleware/logger"
-	"github.com/Remydeme/iurgence/config"
+	"github.com/Remydeme/esme-devops-project/api"
+	"github.com/Remydeme/esme-devops-project/api/middleware"
+	"github.com/Remydeme/esme-devops-project/api/middleware/logger"
+	"github.com/Remydeme/esme-devops-project/config"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
@@ -29,19 +29,30 @@ func main() {
 	// create new router
 	r := mux.NewRouter()
 
+	fs := http.FileServer(http.Dir("templates/"))
+
+	r.Handle("/templates/", middlewares.Then(http.StripPrefix("/templates/", fs))).
+		Methods("GET")
+
 	r.Handle("/ping/", middlewares.ThenFunc(api.Ping)).
 		Methods("GET")
 
-	r.Handle("/v1/signup/", middlewares.ThenFunc(api.SignUp)).
+	r.Handle("/signup/", middlewares.ThenFunc(api.SignUp)).
 		Methods("POST")
 
-	r.Handle("/v1/signin/", middlewares.ThenFunc(api.SignIn)).
+	r.Handle("/signin/", middlewares.ThenFunc(api.SignUpPage)).
+		Methods("GET")
+
+	r.Handle("/signin/", middlewares.ThenFunc(api.SignIn)).
 		Methods("POST")
 
-	r.Handle("/v1/user/add/", authentifiedMiddlewares.ThenFunc(api.CreateUser)).
+	r.Handle("/signin/", middlewares.ThenFunc(api.SignInPage)).
+		Methods("GET")
+
+	r.Handle("/user/add/", authentifiedMiddlewares.ThenFunc(api.CreateUser)).
 		Methods("POST")
 
-	r.Handle("/v1/user/delete/", authentifiedMiddlewares.ThenFunc(api.DeleteUser)).
+	r.Handle("/user/delete/", authentifiedMiddlewares.ThenFunc(api.DeleteUser)).
 		Methods("PUT")
 
 	srv := &http.Server{

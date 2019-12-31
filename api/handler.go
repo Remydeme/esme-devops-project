@@ -2,11 +2,14 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/Remydeme/esme-devops-project/api/errors"
 	"github.com/Remydeme/esme-devops-project/config"
 	"github.com/Remydeme/esme-devops-project/db"
 	"github.com/Remydeme/esme-devops-project/db/models"
 	"github.com/dgrijalva/jwt-go"
+	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -28,6 +31,36 @@ Handler call to check if the server is running
 */
 func Ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Pong..."))
+}
+
+func SignUpPage(w http.ResponseWriter, r *http.Request) {
+	var tpl = template.Must(template.ParseFiles("templates/Sinscrire.html"))
+	tpl.Execute(w, nil)
+	/*body, err := loadFile("templates/signup.html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	fmt.Printf(body, w)*/
+}
+
+func SignInPage(w http.ResponseWriter, r *http.Request) {
+	body, err := loadFile("templates/Seconnecter.html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	fmt.Printf(body, w)
+}
+
+func loadFile(fileName string) (string, error) {
+	bytes, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }
 
 // Add error checking for email that already exists

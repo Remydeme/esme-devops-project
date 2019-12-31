@@ -3,6 +3,7 @@ FROM golang:alpine
 MAINTAINER Rémy DEME <demeremy@gmail.com>
 
 RUN apk update && apk add --no-cache git  && \
+        apk add --no-cache make && \
         go get "github.com/Remydeme/esme-devops-project"
 
 WORKDIR /go/src/github.com/Remydeme/esme-devops-project
